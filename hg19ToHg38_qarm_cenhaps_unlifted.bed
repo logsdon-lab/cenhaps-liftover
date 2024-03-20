@@ -1,28 +1,18 @@
 #Split in new
 chr1	142539895	146982360	q-arm
 #Split in new
-chr2	95326452	98675111	q-arm
-#Split in new
 chr6	61881646	62824970	q-arm
 #Split in new
 chr7	61054350	62237245	q-arm
-#Split in new
-chr8	46839508	48344471	q-arm
 #Split in new
 chr9	65557547	71860827	q-arm
 #Split in new
 chr10	42355975	43085664	q-arm
 #Split in new
-chr13	19020095	19903947	q-arm
-#Split in new
-chr14	19000060	21559311	q-arm
-#Split in new
 chr15	20000406	24348798	q-arm
-#Split in new
+#Partially deleted in new
 chr20	29419740	31153404	q-arm
 #Split in new
 chr21	11187559	15782456	q-arm
 #Split in new
 chr22	16051249	18095879	q-arm
-#Split in new
-chrX	61684936	65507376	q-arm
