@@ -1,5 +1,7 @@
 # Liftover hg19 cenhap coords to t2t-chm13
 
+**NOTE: chr 13, 14, 15, 21, and 22 p-arms are still unlifted.**
+
 CenHap paper
 * https://elifesciences.org/articles/42989
 
