@@ -4,3 +4,4 @@ channels:
 dependencies:
   - bedtools
   - ucsc-liftover
+  - ucsc-bigbedtobed

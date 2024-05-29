@@ -22,32 +22,34 @@ rule get_hg19_pqarm_cenhap_coords:
 
 use rule wget as wget_chain_file with:
     output:
-        outfile=os.path.join(OUTPUT_DIR, "{conv}.over.chain.gz"),
+        outfile=os.path.join(OUTPUT_DIR, "{liftover}.over.chain.gz"),
     params:
         url=lambda wc: (
             "https://hgdownload.cse.ucsc.edu/goldenpath/hg19/liftOver/hg19ToHg38.over.chain.gz"
-            if wc.conv == "hg19-hg38"
+            if wc.liftover == "hg19-hg38"
             else "https://hgdownload.gi.ucsc.edu/hubs/GCA/009/914/755/GCA_009914755.4/liftOver/hg38-chm13v2.over.chain.gz"
         ),
     log:
-        "logs/get_chain_file_{conv}.log",
+        "logs/get_chain_file_{liftover}.log",
 
 
 rule liftover_coords:
     input:
         coords=lambda wc: (
             rules.get_hg19_pqarm_cenhap_coords.output
-            if wc.conv == "hg19-hg38"
-            else expand(rules.liftover_coords.output.lifted_coords, conv=["hg19-hg38"])
+            if wc.liftover == "hg19-hg38"
+            else expand(
+                rules.liftover_coords.output.lifted_coords, liftover=["hg19-hg38"]
+            )
         ),
         chain_file=rules.wget_chain_file.output,
     output:
-        lifted_coords=os.path.join(OUTPUT_DIR, "{conv}_pqarm_cenhap_coords.bed"),
+        lifted_coords=os.path.join(OUTPUT_DIR, "{liftover}_pqarm_cenhap_coords.bed"),
         unlifted_coords=os.path.join(
-            OUTPUT_DIR, "{conv}_pqarm_cenhap_coords_unlifted.bed"
+            OUTPUT_DIR, "{liftover}_pqarm_cenhap_coords_unlifted.bed"
         ),
     log:
-        "logs/liftover_{conv}.log",
+        "logs/liftover_{liftover}.log",
     conda:
         "../envs/tools.yaml"
     shell:
@@ -65,9 +67,9 @@ rule flatten_coords:
         script="workflow/scripts/bedminmax.py",
         coords=rules.liftover_coords.output.lifted_coords,
     output:
-        os.path.join(OUTPUT_DIR, "{conv}_pqarm_cenhap_coords_collapsed.bed"),
+        os.path.join(OUTPUT_DIR, "{liftover}_pqarm_cenhap_coords_collapsed.bed"),
     log:
-        "logs/flatten_coords_{conv}.log",
+        "logs/flatten_coords_{liftover}.log",
     params:
         in_cols=" ".join(["chr", "start", "end", "arm"]),
         out_cols=" ".join(["chr", "start", "end"]),
@@ -86,5 +88,5 @@ rule flatten_coords:
 
 rule liftover_all:
     input:
-        expand(rules.flatten_coords.output, conv=["hg19-hg38", "hg38-chm13"]),
+        expand(rules.flatten_coords.output, liftover=LIFTOVERS),
     default_target: True

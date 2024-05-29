@@ -6,6 +6,14 @@ configfile: "config/config.yaml"
 
 CHROMOSOMES = [f"chr{i}" for i in [range(1, 23), "X", "Y"]]
 OUTPUT_DIR = config["output_dir"]
+TRACKS = ["censat", "segdup"]
+LIFTOVERS = ["hg19-hg38", "hg38-chm13"]
+ALLOWED_CENSAT_PREFIXES = ["mon", "ct"]
+
+
+wildcard_constraints:
+    track="|".join(TRACKS),
+    liftover="|".join(LIFTOVERS),
 
 
 include: "rules/utils.smk"
@@ -16,3 +24,4 @@ include: "rules/find_ld_regions.smk"
 rule all:
     input:
         rules.liftover_all.input,
+        rules.find_ld_regions_all.input,
