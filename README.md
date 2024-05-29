@@ -18,3 +18,7 @@ Chain files
 * hg19 -> t2t-chm13
     * Too many unliftable.
     * https://genome.ucsc.edu/cgi-bin/hgTrackUi?hgsid=1362452629_UneFYykJjrSS6NfDHXANksNtyvdb&db=hub_3267197_GCA_009914755.4&c=CP068276.2&g=hub_3267197_hgLiftOver
+
+
+> [!NOTE]
+> To see the previous output files, see commit [6875db8](https://github.com/koisland/cenhaps_liftover/tree/6875db8116bbea1a7c17c524ec18a46cc975e328)

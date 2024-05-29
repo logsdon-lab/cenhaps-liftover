@@ -1,0 +1,18 @@
+import os
+
+
+configfile: "config/config.yaml"
+
+
+CHROMOSOMES = [f"chr{i}" for i in [range(1, 23), "X", "Y"]]
+OUTPUT_DIR = config["output_dir"]
+
+
+include: "rules/utils.smk"
+include: "rules/liftover_ld_regions.smk"
+include: "rules/find_ld_regions.smk"
+
+
+rule all:
+    input:
+        rules.liftover_all.input,

@@ -1,5 +1,0 @@
-data/censat.bb filter=lfs diff=lfs merge=lfs -text
-data/censat.bed filter=lfs diff=lfs merge=lfs -text
-data/pq_arm.bed filter=lfs diff=lfs merge=lfs -text
-data/sedefSegDups.bb filter=lfs diff=lfs merge=lfs -text
-data/sedefSegDups.bed filter=lfs diff=lfs merge=lfs -text
