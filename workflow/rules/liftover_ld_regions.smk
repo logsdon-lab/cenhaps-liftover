@@ -2,7 +2,7 @@
 
 rule get_hg19_pqarm_cenhap_coords:
     output:
-        os.path.join(OUTPUT_DIR, "hg19_pqarm_cenhap_coords.bed"),
+        os.path.join(OUTPUT_DIR, "liftover_ld_regions", "hg19_pqarm_cenhap_coords.bed"),
     params:
         url_data="https://cdn.elifesciences.org/articles/42989/elife-42989-fig2-data1-v1.tds",
     log:
@@ -22,7 +22,9 @@ rule get_hg19_pqarm_cenhap_coords:
 
 use rule wget as wget_chain_file with:
     output:
-        outfile=os.path.join(OUTPUT_DIR, "{liftover}.over.chain.gz"),
+        outfile=os.path.join(
+            OUTPUT_DIR, "liftover_ld_regions", "{liftover}.over.chain.gz"
+        ),
     params:
         url=lambda wc: (
             "https://hgdownload.cse.ucsc.edu/goldenpath/hg19/liftOver/hg19ToHg38.over.chain.gz"
@@ -44,9 +46,13 @@ rule liftover_coords:
         ),
         chain_file=rules.wget_chain_file.output,
     output:
-        lifted_coords=os.path.join(OUTPUT_DIR, "{liftover}_pqarm_cenhap_coords.bed"),
+        lifted_coords=os.path.join(
+            OUTPUT_DIR, "liftover_ld_regions", "{liftover}_pqarm_cenhap_coords.bed"
+        ),
         unlifted_coords=os.path.join(
-            OUTPUT_DIR, "{liftover}_pqarm_cenhap_coords_unlifted.bed"
+            OUTPUT_DIR,
+            "liftover_ld_regions",
+            "{liftover}_pqarm_cenhap_coords_unlifted.bed",
         ),
     log:
         "logs/liftover_{liftover}.log",
@@ -67,7 +73,11 @@ rule flatten_coords:
         script="workflow/scripts/bedminmax.py",
         coords=rules.liftover_coords.output.lifted_coords,
     output:
-        os.path.join(OUTPUT_DIR, "{liftover}_pqarm_cenhap_coords_collapsed.bed"),
+        os.path.join(
+            OUTPUT_DIR,
+            "liftover_ld_regions",
+            "{liftover}_pqarm_cenhap_coords_collapsed.bed",
+        ),
     log:
         "logs/flatten_coords_{liftover}.log",
     params:
