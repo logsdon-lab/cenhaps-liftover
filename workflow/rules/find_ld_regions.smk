@@ -67,6 +67,7 @@ rule filter_segdup_regions:
         """
 
 
+# TODO: Fix acros starting positions.
 rule find_ld_regions:
     input:
         censat_bed=rules.filter_censat_regions.output,
@@ -85,8 +86,7 @@ rule find_ld_regions:
         "../envs/tools.yaml"
     shell:
         """
-        {{
-            bedtools complement \
+        {{ bedtools complement \
             -i <(cat {input.segdup_bed} {input.censat_bed} | sort -k 1,1 -k2,2n) \
             -g <(sort -k1,1 {input.genome_sizes}) | \
             bedtools intersect -a - -b {input.ld_bed} \
@@ -96,19 +96,25 @@ rule find_ld_regions:
 
 rule annotate_filter_ld_regions:
     input:
-        rules.find_ld_regions.output,
+        ld_bed=rules.find_ld_regions.output,
+        censat_bed=expand(rules.convert_bbed_to_bed.output, track="censat"),
     output:
         os.path.join(OUTPUT_DIR, "find_ld_regions", "ld_regions_annotated.bed"),
+    log:
+        "logs/annotate_filter_ld_regions.log",
     params:
         len_threshold=4_000,
+    conda:
+        "../envs/tools.yaml"
     shell:
         """
+        {{ bedtools intersect -wb -a {input.ld_bed} -b {input.censat_bed} | \
         awk -v OFS="\\t" '{{
             len=$3-$2
             if (len > {params.len_threshold}) {{
-                print $1, $2, $3, "TODO", len
-            }}
-        }}' {input} > {output}
+                print $1, $2, $3, $NF, len
+            }} \
+        }}' ;}}> {output} 2> {log}
         """
 
 
