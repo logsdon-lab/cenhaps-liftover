@@ -67,15 +67,20 @@ rule filter_segdup_regions:
         """
 
 
-# TODO: Fix acros starting positions.
 rule find_ld_regions:
+    """
+    Find complement of segdup and censat regions, in other words, every other region between the start of the chr and the end of the q-arm.
+    Then intersect with regions known to be in LD.
+    """
     input:
         censat_bed=rules.filter_censat_regions.output,
         segdup_bed=rules.filter_segdup_regions.output,
         genome_sizes=expand(
             rules.extract_genome_start_to_qarm_sizes.output, liftover=["hg38-chm13"]
         ),
-        ld_bed=expand(rules.flatten_coords.output, liftover=["hg38-chm13"]),
+        ld_bed=expand(
+            rules.liftover_coords.output.lifted_coords, liftover=["hg38-chm13"]
+        ),
     output:
         os.path.join(OUTPUT_DIR, "find_ld_regions", "ld_regions.bed"),
     params:
@@ -89,7 +94,7 @@ rule find_ld_regions:
         {{ bedtools complement \
             -i <(cat {input.segdup_bed} {input.censat_bed} | sort -k 1,1 -k2,2n) \
             -g <(sort -k1,1 {input.genome_sizes}) | \
-            bedtools intersect -a - -b {input.ld_bed} \
+            bedtools intersect -wa -wb -a - -b {input.ld_bed} \
         ;}} > {output} 2> {log}
         """
 
@@ -108,16 +113,36 @@ rule annotate_filter_ld_regions:
         "../envs/tools.yaml"
     shell:
         """
-        {{ bedtools intersect -wb -a {input.ld_bed} -b {input.censat_bed} | \
+        {{ bedtools intersect -wa -wb -a {input.ld_bed} -b {input.censat_bed} | \
         awk -v OFS="\\t" '{{
             len=$3-$2
             if (len > {params.len_threshold}) {{
-                print $1, $2, $3, $NF, len
+                print $1, $2, $3, $NF, $7, len
             }} \
         }}' ;}}> {output} 2> {log}
         """
 
 
+rule merge_annotations_ld_regions:
+    """
+    Intersection produces multiple identical rows with the censat annotation being different.
+    This merges the annotation into one row in no particular order.
+    """
+    input:
+        script="workflow/scripts/merge_ld_annot.py",
+        regions=rules.annotate_filter_ld_regions.output,
+    output:
+        os.path.join(OUTPUT_DIR, "find_ld_regions", "ld_regions_annotated_merged.bed"),
+    log:
+        "logs/merge_annotations_ld_regions.log",
+    conda:
+        "../envs/py.yaml"
+    shell:
+        """
+        python {input.script} {input.regions} > {output} 2> {log}
+        """
+
+
 rule find_ld_regions_all:
     input:
-        rules.annotate_filter_ld_regions.output,
+        rules.merge_annotations_ld_regions.output,

@@ -1,10 +1,15 @@
 
 
 rule get_hg19_pqarm_cenhap_coords:
+    """
+    Get hg19 pqarm cenhap coords.
+    We add 5000 bp on both sides to help create anchor points on edges of the centromere for the liftover in the next step.
+    """
     output:
         os.path.join(OUTPUT_DIR, "liftover_ld_regions", "hg19_pqarm_cenhap_coords.bed"),
     params:
         url_data="https://cdn.elifesciences.org/articles/42989/elife-42989-fig2-data1-v1.tds",
+        bp_added=5000,
     log:
         "logs/get_hg19_pqarm_cenhap_coords.log",
     shell:
@@ -14,8 +19,8 @@ rule get_hg19_pqarm_cenhap_coords:
             'NR > 3 {{
                 $2=($2 == "NA") ? 0 : $2;
                 $5=($5 == "NA") ? 0 : $5;
-                print $1, $2, $2+5000, "p-arm";
-                print $1, $5-5000, $5, "q-arm";
+                print $1, $2, $2+{params.bp_added}, "p-arm";
+                print $1, $5-{params.bp_added}, $5, "q-arm";
             }}' > {output}
         """
 
