@@ -19,9 +19,11 @@ wildcard_constraints:
 include: "rules/utils.smk"
 include: "rules/liftover_ld_regions.smk"
 include: "rules/find_ld_regions.smk"
+include: "rules/extract_ld_regions_ref.smk"
 
 
 rule all:
     input:
         rules.liftover_all.input,
         rules.find_ld_regions_all.input,
+        rules.extract_ld_regions_ref_all.input,

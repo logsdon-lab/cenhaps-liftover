@@ -3,5 +3,8 @@ channels:
   - bioconda
 dependencies:
   - bedtools
+  - seqtk
+  - seqkit
+  - samtools
   - ucsc-liftover
   - ucsc-bigbedtobed
