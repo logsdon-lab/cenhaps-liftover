@@ -1,6 +1,7 @@
 # `cenhaps_liftover`
-Liftover hg19 cenhap coords to t2t-chm13.
-* Finds coordinates of centromere-proximal haplotypes:
+Workflow to do the following:
+1. Liftover hg19 cenhap coords to t2t-chm13.
+2. Finds coordinates of centromere-proximal haplotypes:
     1. Only intersecting centromeric transition or monomeric alpha-satellite regions.
     2. Not within any segmental duplications.
 
