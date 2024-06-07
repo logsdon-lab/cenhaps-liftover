@@ -1,4 +1,4 @@
-# `cenhaps_liftover`
+# `cenhaps-liftover`
 Workflow to do the following:
 1. Liftover hg19 cenhap coords to t2t-chm13.
 2. Finds coordinates of centromere-proximal haplotypes:
