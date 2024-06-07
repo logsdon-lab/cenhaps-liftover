@@ -1,4 +1,16 @@
-# Liftover hg19 cenhap coords to t2t-chm13
+# `cenhaps_liftover`
+Liftover hg19 cenhap coords to t2t-chm13.
+* Finds coordinates of centromere-proximal haplotypes:
+    1. Only intersecting centromeric transition or monomeric alpha-satellite regions.
+    2. Not within any segmental duplications.
+
+
+### Usage
+```bash
+snakemake -p -c4 --use-conda
+```
+
+### Notes
 
 **NOTE: chr 13, 14, 15, 21, and 22 p-arms are still unlifted.**
 
