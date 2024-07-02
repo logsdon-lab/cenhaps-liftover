@@ -6,7 +6,11 @@ configfile: "config/config.yaml"
 
 CHROMOSOMES = [f"chr{i}" for i in [range(1, 23), "X", "Y"]]
 OUTPUT_DIR = config["output_dir"]
-TRACKS = ["censat", "segdup"]
+TRACKS = {
+    "censat": "https://hgdownload.soe.ucsc.edu/gbdb/hs1/censat/censat.bb",
+    "segdup": "https://hgdownload.soe.ucsc.edu/gbdb/hs1/sedefSegDups/sedefSegDups.bb",
+    "repeatmasker": "https://hgdownload.soe.ucsc.edu/gbdb/hs1/t2tRepeatMasker/chm13v2.0_rmsk.bb",
+}
 LIFTOVERS = ["hg19-hg38", "hg38-chm13"]
 ALLOWED_CENSAT_PREFIXES = ["mon", "ct"]
 
