@@ -70,14 +70,19 @@ rule filter_segdup_regions:
 # We need all of them. Split on space in detailed annotation column.
 rule filter_repeatmasker_regions:
     input:
+        script="workflow/scripts/filter_rm.py",
         bed=expand(rules.convert_bbed_to_bed.output, track="repeatmasker"),
     output:
         os.path.join(OUTPUT_DIR, "find_ld_regions", "repeatmasker_filtered.bed"),
     params:
         allowed_region="ALR/Alpha",
+    conda:
+        "../envs/py.yaml"
+    log:
+        "logs/filter_rm.log",
     shell:
         """
-        cut -f 14 {input} | sed 's/,/\\n/g' | awk -v OFS="\\t" '{{ if ($10 != "{params.allowed_region}") {{ print $5, $6, $7, $10"#"$11}}}}' > {output}
+        python {input.script} -i <(cut -f 14 {input.bed} | sed 's/,/\\n/g') > {output}
         """
 
 
@@ -93,9 +98,7 @@ rule find_ld_regions:
         genome_sizes=expand(
             rules.extract_genome_start_to_qarm_sizes.output, liftover=["hg38-chm13"]
         ),
-        ld_bed=expand(
-            rules.liftover_coords.output.lifted_coords, liftover=["hg38-chm13"]
-        ),
+        ld_bed=expand(rules.flatten_coords.output, liftover=["hg38-chm13"]),
     output:
         os.path.join(OUTPUT_DIR, "find_ld_regions", "ld_regions.bed"),
     params:
